@@ -8,87 +8,88 @@
 // Import node-fetch module
 const fetch = require('node-fetch');
 
+
 module.exports = {
-    // Hàm gọi API
-    callAPI: async function (req, res) {
+
+    // Hàm lưu cache
+    saveCache: async function (req, res) {
         try {
-            // Gọi API để lấy danh sách các bài viết
-            const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+            const { key, value } = req.body;
 
-            // Chuyển đổi kết quả trả về thành đối tượng JSON
-            const posts = await response.json();
-
-            // In ra màn hình console để kiểm tra kết quả
-            console.log('Danh sách bài viết:', posts);
-
-            // Trả về kết quả cho người dùng (ở đây mình chỉ log kết quả ra console)
-            return res.json(posts);
-        } catch (error) {
-            // Xử lý lỗi nếu có
-            console.error('Lỗi khi gọi API:', error);
-            return res.serverError(error);
-        }
-    },
-
-    createPost: async function (req, res) {
-        try {
-            // Dữ liệu cần gửi đi
-            const postData = {
-                title: 'New post',
-                body: 'Lorem ipsum dolor sit amet.',
-                userId: 1 // ID của người dùng tạo bài viết
-            };
-
-            // Gửi yêu cầu POST đến API để tạo bài viết mới
-            const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(postData)
-            });
-
-            // Chuyển đổi kết quả trả về thành đối tượng JSON
-            const newPost = await response.json();
-
-            // In ra màn hình console để kiểm tra kết quả
-            console.log('Bài viết mới được tạo:', newPost);
-
-            // Trả về kết quả cho người dùng (ở đây mình chỉ log kết quả ra console)
-            return res.json(newPost);
-        } catch (error) {
-            // Xử lý lỗi nếu có
-            console.error('Lỗi khi gọi API:', error);
-            return res.serverError(error);
-        }
-    },
-    getInfoAndSendToAbc: async function (req, res) {
-        try {
-            // Bước 1: Nhận các giá trị từ phần body
-            const { url, method, body } = req.body;
-
-            // Bước 2: Gọi tới API Zalo để lấy thông tin profile
-            const responseZalo = await fetch('https://openapi.zalo.me/v2.0/oa/getprofile?data={"user_id":"301295182794766761"}', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'access_token': 'YOUR_ACCESS_TOKEN' // Thay YOUR_ACCESS_TOKEN bằng token thực tế của bạn
-                }
-            });
-
-            // Kiểm tra nếu kết quả gọi API Zalo không thành công
-            if (!responseZalo.ok) {
-                throw new Error('Không thể lấy thông tin profile từ Zalo');
+            if (!key || !value) {
+                return res.badRequest({ error: 'Missing key or value in request body' });
             }
 
-            // Chuyển đổi kết quả trả về từ Zalo thành đối tượng JSON
-            const profileData = await responseZalo.json();
+            redisClient.set(key, JSON.stringify(value), function (err, reply) {
+                if (err) {
+                    console.error('Lỗi khi lưu cache:', err);
+                    return res.serverError(err);
+                }
+                console.log('Đã lưu cache thành công: ' + key + ' value = ' + value);
+                return res.json({ message: 'Cache saved successfully', reply });
+            });
+        } catch (error) {
+            console.error('Lỗi khi gọi API:', error);
+            return res.serverError(error);
+        }
+    },
 
-            // Bước 3: Truyền kết quả từ Zalo cho hàm truyenGiaTri
-            await truyenGiaTri(profileData);
+    // Hàm lấy cache
+    getCache: async function (req, res) {
+        try {
+            const { key } = req.params;
 
-            // Trả về kết quả thành công
-            return res.ok('Thông tin đã được gửi thành công cho API abc.com');
+            if (!key) {
+                return res.badRequest({ error: 'Missing key in request parameters' });
+            }
+
+            redisClient.get(key, function (err, reply) {
+                if (err) {
+                    console.error('Lỗi khi lấy cache:', err);
+                    return res.serverError(err);
+                }
+                if (!reply) {
+                    return res.notFound({ message: 'Cache not found' });
+                }
+                console.log('Đã lấy cache thành công: ' + key);
+                return res.json(JSON.parse(reply));
+            });
+        } catch (error) {
+            console.error('Lỗi khi gọi API:', error);
+            return res.serverError(error);
+        }
+    },
+    // Lấy thông tin hội thoại cụ thể
+    getInforThreadUser: async function (req, res) {
+        try {
+            const { user_id, offset, count } = req.body;
+
+            const accessToken = await getAcessTokenZalo({ bizId: 1 })
+            // Kiểm tra xem user_id có tồn tại hay không
+
+            if (!user_id) {
+                return res.badRequest({ error: 'user_id is required' });
+            }
+            // URL của API
+            const url = `https://openapi.zalo.me/v2.0/oa/conversation?data={"user_id":${user_id},"offset":${offset || 0},"count":${count || 5}}`;
+
+            // Tạo options cho fetch bao gồm phương thức và header
+            const options = {
+                method: 'GET',
+                headers: {
+                    'access_token': `${accessToken}`, // Thay thế <your_access_token> bằng access token thực tế của bạn
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            // Gọi API
+            const response = await fetch(url, options);
+
+            // Chuyển đổi kết quả trả về thành đối tượng JSON
+            const data = await response.json();
+
+            // Trả về kết quả cho người dùng
+            return res.json(data);
         } catch (error) {
             // Xử lý lỗi nếu có
             console.error('Lỗi khi gọi API:', error);
@@ -97,31 +98,24 @@ module.exports = {
     }
 };
 
-// Hàm truyenGiaTri nhận kết quả từ Zalo và gửi cho API abc.com
-async function truyenGiaTri(profileData) {
+async function getAcessTokenZalo(e) {
     try {
-        // Bước 4: Gửi kết quả từ Zalo cho API abc.com
-        const responseAbc = await fetch('https://abc.com', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(profileData)
-        });
-
-        // Kiểm tra nếu gửi kết quả cho API abc.com không thành công
-        if (!responseAbc.ok) {
-            throw new Error('Không thể gửi thông tin cho API abc.com');
+        const resData = await fetch('https://script.google.com/macros/s/AKfycbzhj_L7FnTPRlUfYgOH8NOZCswatLLReiSkQzj0nQqIgy8PjGcH5Jd7SMM0-hLRF6e-/exec?idChucNang=8', {
+            method: "POST",
+            headers: {},
+            body: JSON.stringify({})
+        })
+        const acessTokenZalo = await resData.json();
+        if (acessTokenZalo.giaTriTraVe) {
+            return acessTokenZalo.giaTriTraVe
         }
-
-        // In ra màn hình console để kiểm tra kết quả
-        console.log('Thông tin đã được gửi thành công cho API abc.com');
     } catch (error) {
-        // Xử lý lỗi nếu có
         console.error('Lỗi khi gửi thông tin cho API abc.com:', error);
         throw error; // Ném lỗi để xử lý ở bước gọi hàm này
     }
-};
+}
+
+
 
 
 

@@ -40,7 +40,13 @@ module.exports.routes = {
   ***************************************************************************/
 
   'GET /api/user': 'ApiController.callAPI',
-  'GET /api/user1': 'ApiController.createPost'
+  'GET /api/user1': 'ApiController.createPost',
+
+  'GET /api/user4': 'ApiController.saveCache',
+  'POST /cache/save': 'CacheController.saveCache',
+  'GET /cache/get/:key': 'CacheController.getCache',
+  'GET /hello': 'HelloController.hello',
+  'POST /zalo/v2.0/oa/conversation': 'ApiController.getInforThreadUser',
   //  ╔═╗╔═╗╦  ╔═╗╔╗╔╔╦╗╔═╗╔═╗╦╔╗╔╔╦╗╔═╗
   //  ╠═╣╠═╝║  ║╣ ║║║ ║║╠═╝║ ║║║║║ ║ ╚═╗
   //  ╩ ╩╩  ╩  ╚═╝╝╚╝═╩╝╩  ╚═╝╩╝╚╝ ╩ ╚═╝
