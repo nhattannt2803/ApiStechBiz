@@ -46,7 +46,10 @@ module.exports.routes = {
   'POST /cache/save': 'CacheController.saveCache',
   'GET /cache/get/:key': 'CacheController.getCache',
   'GET /hello': 'HelloController.hello',
+  //Zalo
   'POST /zalo/v2.0/oa/conversation': 'ApiController.getInforThreadUser',
+  //Chức Năng Mở Rộng
+  'POST /sha256':'HashController.generateAndPostHash'
   //  ╔═╗╔═╗╦  ╔═╗╔╗╔╔╦╗╔═╗╔═╗╦╔╗╔╔╦╗╔═╗
   //  ╠═╣╠═╝║  ║╣ ║║║ ║║╠═╝║ ║║║║║ ║ ╚═╗
   //  ╩ ╩╩  ╩  ╚═╝╝╚╝═╩╝╩  ╚═╝╩╝╚╝ ╩ ╚═╝
