@@ -23,7 +23,7 @@ module.exports = {
                 .update(content)
                 .digest('hex');
 
-            return res.json(hash)
+            return res.json({ hash: hash })
         } catch (error) {
             // Xử lý lỗi nếu có
             console.error('Lỗi khi gọi API:', error);
