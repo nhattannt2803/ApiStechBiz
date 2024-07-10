@@ -62,9 +62,11 @@ module.exports = {
     // Lấy thông tin hội thoại cụ thể
     getInforThreadUser: async function (req, res) {
         try {
-            const { user_id, offset, count } = req.body;
-
-            const accessToken = await getAcessTokenZalo({ bizId: 1 })
+            const { user_id, offset, count, bizId } = req.body;
+console.log('====================================');
+console.log(bizId);
+console.log('====================================');
+            const accessToken = await getAcessTokenZalo({ bizId: bizId })
             // Kiểm tra xem user_id có tồn tại hay không
 
             if (!user_id) {
@@ -103,10 +105,14 @@ async function getAcessTokenZalo(e) {
         const resData = await fetch('https://script.google.com/macros/s/AKfycbzhj_L7FnTPRlUfYgOH8NOZCswatLLReiSkQzj0nQqIgy8PjGcH5Jd7SMM0-hLRF6e-/exec?idChucNang=8', {
             method: "POST",
             headers: {},
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                bizId: e.bizId
+            })
         })
+
         const acessTokenZalo = await resData.json();
         if (acessTokenZalo.giaTriTraVe) {
+            console.log(acessTokenZalo.giaTriTraVe);
             return acessTokenZalo.giaTriTraVe
         }
     } catch (error) {
