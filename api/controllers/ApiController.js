@@ -63,9 +63,7 @@ module.exports = {
     getInforThreadUser: async function (req, res) {
         try {
             const { user_id, offset, count, bizId } = req.body;
-console.log('====================================');
-console.log(bizId);
-console.log('====================================');
+
             const accessToken = await getAcessTokenZalo({ bizId: bizId })
             // Kiểm tra xem user_id có tồn tại hay không
 
