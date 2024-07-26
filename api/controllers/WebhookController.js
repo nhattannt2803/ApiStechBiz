@@ -16,6 +16,21 @@ module.exports = {
             console.log('Webhook received:', data);
 
             // Xử lý dữ liệu (nếu cần)
+            const content = JSON.stringify(data);
+            const telegramApiUrl = 'https://api.telegram.org/bot6022640946:AAH5PMaNZJXMKg2wJDhuG71oPZHkm8Kmn-4/sendMessage';
+            const chatId = '-542594881';
+
+            // Gửi yêu cầu POST đến API của Telegram
+            const response = await fetch(telegramApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: content
+                })
+            });
 
             // Trả về mã trạng thái HTTP 200
             return res.ok();
