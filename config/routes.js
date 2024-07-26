@@ -49,7 +49,7 @@ module.exports.routes = {
   //Zalo
   'POST /zalo/v2.0/oa/conversation': 'ApiController.getInforThreadUser',
   //Chức Năng Mở Rộng
-  'POST /sha256':'HashController.generateAndPostHash'
+  'POST /sha256': 'HashController.generateAndPostHash',
   //  ╔═╗╔═╗╦  ╔═╗╔╗╔╔╦╗╔═╗╔═╗╦╔╗╔╔╦╗╔═╗
   //  ╠═╣╠═╝║  ║╣ ║║║ ║║╠═╝║ ║║║║║ ║ ╚═╗
   //  ╩ ╩╩  ╩  ╚═╝╝╚╝═╩╝╩  ╚═╝╩╝╚╝ ╩ ╚═╝
@@ -59,7 +59,7 @@ module.exports.routes = {
   //  ╦ ╦╔═╗╔╗ ╦ ╦╔═╗╔═╗╦╔═╔═╗
   //  ║║║║╣ ╠╩╗╠═╣║ ║║ ║╠╩╗╚═╗
   //  ╚╩╝╚═╝╚═╝╩ ╩╚═╝╚═╝╩ ╩╚═╝
-
+  'POST /webhook': 'WebhookController.handleWebhook'
 
   //  ╔╦╗╦╔═╗╔═╗
   //  ║║║║╚═╗║
