@@ -50,6 +50,9 @@ module.exports.routes = {
   'POST /zalo/v2.0/oa/conversation': 'ApiController.getInforThreadUser',
   //Chức Năng Mở Rộng
   'POST /sha256': 'HashController.generateAndPostHash',
+  'POST /ocr': 'ApiController.recognize',
+  'POST /ocr-url': 'ApiController.recognizeUrl',
+  'POST /ocr-url-google': 'GoogleCloudController.recognize',
   //  ╔═╗╔═╗╦  ╔═╗╔╗╔╔╦╗╔═╗╔═╗╦╔╗╔╔╦╗╔═╗
   //  ╠═╣╠═╝║  ║╣ ║║║ ║║╠═╝║ ║║║║║ ║ ╚═╗
   //  ╩ ╩╩  ╩  ╚═╝╝╚╝═╩╝╩  ╚═╝╩╝╚╝ ╩ ╚═╝

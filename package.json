@@ -10,13 +10,17 @@
     "@sailshq/socket.io-redis": "^5.2.0",
     "async": "2.0.1",
     "crypto": "^1.0.1",
+    "dotenv": "^16.4.5",
+    "googleapis": "^140.0.1",
     "grunt": "1.0.1",
     "node-fetch": "^2.6.1",
     "redis": "^4.6.14",
     "sails": "^1.0.2",
     "sails-hook-grunt": "^3.0.2",
     "sails-hook-orm": "^2.0.0-16",
-    "sails-hook-sockets": "^1.4.0"
+    "sails-hook-sockets": "^1.4.0",
+    "sharp": "^0.33.4",
+    "tesseract.js": "^5.1.0"
   },
   "devDependencies": {
     "@sailshq/eslint": "^4.19.3"

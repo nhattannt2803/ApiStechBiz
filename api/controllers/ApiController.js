@@ -7,7 +7,9 @@
 
 // Import node-fetch module
 const fetch = require('node-fetch');
-
+const Tesseract = require('tesseract.js');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = {
 
@@ -93,6 +95,49 @@ module.exports = {
         } catch (error) {
             // Xử lý lỗi nếu có
             console.error('Lỗi khi gọi API:', error);
+            return res.serverError(error);
+        }
+    },
+    recognize: async function (req, res) {
+        try {
+            const image = req.file('image')._files[0].stream;
+            const result = await Tesseract.recognize(image, 'eng', {
+                logger: m => console.log(m)
+            });
+            return res.json({ text: result.data.text });
+        } catch (error) {
+            return res.serverError(error);
+        }
+    },
+    recognizeUrl: async function (req, res) {
+
+        try {
+            const imageUrl = req.body.imageUrl;
+            const imagePath = path.join(__dirname, 'temp-image.jpg');
+            console.log('====================================');
+            console.log(imageUrl);
+            console.log('====================================');
+            // Tải xuống hình ảnh từ URL
+            const response = await fetch(imageUrl);
+            const buffer = await response.buffer();
+
+            // Lưu hình ảnh tạm thời
+            fs.writeFileSync(imagePath, buffer);
+
+            // Sử dụng Tesseract.js để nhận dạng văn bản
+            const result = await Tesseract.recognize(imagePath, 'eng', {
+               // logger: m => console.log(m)
+            });
+
+            // Xóa hình ảnh tạm thời sau khi xử lý xong
+            fs.unlinkSync(imagePath);
+
+            // Trả về kết quả
+            console.log('====================================');
+            console.log(result.data.text);
+            console.log('====================================');
+            return res.json({ text: result.data.text });
+        } catch (error) {
             return res.serverError(error);
         }
     }
