@@ -98,6 +98,43 @@ module.exports = {
             return res.serverError(error);
         }
     },
+    // Lấy thông tin chi tiết người dùng
+    getInforUser: async function (req, res) {
+        try {
+            const { user_id, bizId } = req.body;
+
+            const accessToken = await getAcessTokenZalo({ bizId: bizId })
+            // Kiểm tra xem user_id có tồn tại hay không
+
+            if (!user_id) {
+                return res.badRequest({ error: 'user_id is required' });
+            }
+            // URL của API
+            const url = `https://openapi.zalo.me/v3.0/oa/user/detail?data={"user_id":${user_id}}`;
+
+            // Tạo options cho fetch bao gồm phương thức và header
+            const options = {
+                method: 'GET',
+                headers: {
+                    'access_token': `${accessToken}`, // Thay thế <your_access_token> bằng access token thực tế của bạn
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            // Gọi API
+            const response = await fetch(url, options);
+
+            // Chuyển đổi kết quả trả về thành đối tượng JSON
+            const data = await response.json();
+
+            // Trả về kết quả cho người dùng
+            return res.json(data);
+        } catch (error) {
+            // Xử lý lỗi nếu có
+            console.error('Lỗi khi gọi API:', error);
+            return res.serverError(error);
+        }
+    },
     recognize: async function (req, res) {
         try {
             const image = req.file('image')._files[0].stream;
@@ -126,7 +163,7 @@ module.exports = {
 
             // Sử dụng Tesseract.js để nhận dạng văn bản
             const result = await Tesseract.recognize(imagePath, 'eng', {
-               // logger: m => console.log(m)
+                // logger: m => console.log(m)
             });
 
             // Xóa hình ảnh tạm thời sau khi xử lý xong
@@ -155,7 +192,7 @@ async function getAcessTokenZalo(e) {
 
         const acessTokenZalo = await resData.json();
         if (acessTokenZalo.giaTriTraVe) {
-            console.log(acessTokenZalo.giaTriTraVe);
+
             return acessTokenZalo.giaTriTraVe
         }
     } catch (error) {

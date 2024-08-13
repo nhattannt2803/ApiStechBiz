@@ -48,6 +48,7 @@ module.exports.routes = {
   'GET /hello': 'HelloController.hello',
   //Zalo
   'POST /zalo/v2.0/oa/conversation': 'ApiController.getInforThreadUser',
+  'POST /zalo/v3.0/oa/user/detail': 'ApiController.getInforUser',
   //Chức Năng Mở Rộng
   'POST /sha256': 'HashController.generateAndPostHash',
   'POST /ocr': 'ApiController.recognize',
