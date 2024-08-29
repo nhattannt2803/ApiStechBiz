@@ -54,6 +54,8 @@ module.exports.routes = {
   'POST /ocr': 'ApiController.recognize',
   'POST /ocr-url': 'ApiController.recognizeUrl',
   'POST /ocr-url-google': 'GoogleCloudController.recognize',
+  'POST /upload-image-smaxapp':  'ImageUploadController.uploadFromUrlSmaxApp' ,
+  // 'POST /upload-image': { controller: 'ImageUpload', action: 'uploadFromUrl' },
   //  ╔═╗╔═╗╦  ╔═╗╔╗╔╔╦╗╔═╗╔═╗╦╔╗╔╔╦╗╔═╗
   //  ╠═╣╠═╝║  ║╣ ║║║ ║║╠═╝║ ║║║║║ ║ ╚═╗
   //  ╩ ╩╩  ╩  ╚═╝╝╚╝═╩╝╩  ╚═╝╩╝╚╝ ╩ ╚═╝
